@@ -1,3 +1,4 @@
+# 添加如下内容：
 clear
 # set PowerShell to UTF-8
 [console]::InputEncoding = [console]::OutputEncoding = New-Object System.Text.UTF8Encoding
@@ -29,22 +30,33 @@ function which ($command) {
     Select-Object -ExpandProperty Path -ErrorAction SilentlyContinue
 }
 
-function y {
-    $tmp = [System.IO.Path]::GetTempFileName()
-    yazi $args --cwd-file="$tmp"
-    $cwd = Get-Content -Path $tmp -Encoding UTF8
-    if (-not [String]::IsNullOrEmpty($cwd) -and $cwd -ne $PWD.Path) {
-        Set-Location -LiteralPath ([System.IO.Path]::GetFullPath($cwd))
-    }
-    Remove-Item -Path $tmp
-}
 
 # Alias
 Set-Alias -Name ll -Value Get-ChildItem
 Set-Alias vim nvim
-Set-Alias nvim neovide
-Set-Alias Cursor "C:\\Users\\Saury\\AppData\Local\\Programs\\cursor\\Cursor.exe"
-Set-Alias Music "D:\\Program Files\\Soda Music\\SodaMusicLauncher.exe"
-Set-Alias Chrome "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
-Set-Alias Yakit "D:\\Program Files\\yakit\\Yakit\\Yakit.exe"
+#Set-Alias nvim neovide
 
+#代理
+function proxy {
+    $env:http_proxy = "http://127.0.0.1:7890"
+    $env:https_proxy = "http://127.0.0.1:7890"
+    [System.Net.WebRequest]::DefaultWebProxy = New-Object System.Net.WebProxy("http://127.0.0.1:7890")
+    Write-Host "Proxy enabled: http://127.0.0.1:7890" -ForegroundColor Green
+}
+
+function unproxy {
+    $env:http_proxy = $null
+    $env:https_proxy = $null
+    [System.Net.WebRequest]::DefaultWebProxy = $null
+    Write-Host "Proxy disabled" -ForegroundColor Yellow
+}
+
+function check-proxy {
+    if ($env:http_proxy -or $env:https_proxy) {
+        Write-Host "Current proxy settings:" -ForegroundColor Cyan
+        Write-Host "HTTP Proxy: $env:http_proxy"
+        Write-Host "HTTPS Proxy: $env:https_proxy"
+    } else {
+        Write-Host "No proxy is currently set." -ForegroundColor Cyan
+    }
+}

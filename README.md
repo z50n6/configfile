@@ -93,26 +93,49 @@ function which ($command) {
   Get-Command -Name $command -ErrorAction SilentlyContinue |
     Select-Object -ExpandProperty Path -ErrorAction SilentlyContinue
 }
-## yazi  
-function y {
-    $tmp = [System.IO.Path]::GetTempFileName()
-    yazi $args --cwd-file="$tmp"
-    $cwd = Get-Content -Path $tmp -Encoding UTF8
-    if (-not [String]::IsNullOrEmpty($cwd) -and $cwd -ne $PWD.Path) {
-        Set-Location -LiteralPath ([System.IO.Path]::GetFullPath($cwd))
-    }
-    Remove-Item -Path $tmp
-}
+
 
 # Alias
 Set-Alias -Name ll -Value Get-ChildItem
 Set-Alias vim nvim
-Set-Alias nvim neovide
-Set-Alias Cursor "C:\\Users\\Saury\\AppData\Local\\Programs\\cursor\\Cursor.exe"
-Set-Alias Music "D:\\Program Files\\Soda Music\\SodaMusicLauncher.exe"
-Set-Alias Chrome "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
-Set-Alias Yakit "D:\\Program Files\\yakit\\Yakit\\Yakit.exe"
+#Set-Alias nvim neovide
+
+#代理
+function proxy {
+    $env:http_proxy = "http://127.0.0.1:7890"
+    $env:https_proxy = "http://127.0.0.1:7890"
+    [System.Net.WebRequest]::DefaultWebProxy = New-Object System.Net.WebProxy("http://127.0.0.1:7890")
+    Write-Host "Proxy enabled: http://127.0.0.1:7890" -ForegroundColor Green
+}
+
+function unproxy {
+    $env:http_proxy = $null
+    $env:https_proxy = $null
+    [System.Net.WebRequest]::DefaultWebProxy = $null
+    Write-Host "Proxy disabled" -ForegroundColor Yellow
+}
+
+function check-proxy {
+    if ($env:http_proxy -or $env:https_proxy) {
+        Write-Host "Current proxy settings:" -ForegroundColor Cyan
+        Write-Host "HTTP Proxy: $env:http_proxy"
+        Write-Host "HTTPS Proxy: $env:https_proxy"
+    } else {
+        Write-Host "No proxy is currently set." -ForegroundColor Cyan
+    }
+}
 ```
+
+#### 代理
+
+现在，你可以在 PowerShell 中使用以下命令：
+
+- 输入 `proxy` 来启用代理
+- 输入 `unproxy` 来禁用代理
+- 输入 `check-proxy` 来查看当前的代理设置
+
+> 1. 这个设置只影响当前的 PowerShell 会话，不会影响其他应用程序或系统级的代理设置。
+> 2. 如果你的代理地址和端口不是 `127.0.0.1:7890`，请相应地修改函数中的 URL。
 
 #### 添加右键菜单
 
