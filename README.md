@@ -124,6 +124,12 @@ function check-proxy {
         Write-Host "No proxy is currently set." -ForegroundColor Cyan
     }
 }
+
+# 路径快速切换
+function cdNotion(){
+  Set-Location D:/Documents/Z/The-Road-to-Safety-main/
+}
+
 ```
 
 #### 代理
